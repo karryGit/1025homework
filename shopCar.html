@@ -11,47 +11,41 @@
 </head>
 <body>
 <div id="app">
-    <shopping @pass="total"></shopping>
-    <p>总价:{{totalPrice}}</p>
+    <shopping id="shop"
+            v-for="(good, index) in goods"
+            :price="good.price"
+            :index="index"
+            :key="index"
+            @pass="total">
+    </shopping>
+    <p class="total">总价:{{totalPrice}}</p>
 </div>
 <script>
-    var arr = [{sub: "-", add: "+", price: 10, count: 0},
-                {sub: "-", add: "+", price: 20, count: 0},
-                {sub: "-", add: "+", price: 30, count: 0},
-                {sub: "-", add: "+", price: 40, count: 0}];
     Vue.component('Shopping', {
         template: `<div>
-                      <div v-for="(goods,index) in goods_list">
-                          <p>单价:{{goods.price}}</p>
-                          <button @click="sub">{{goods.sub}}</button>
-                          <p>{{goods.count}}件</p>
-                          <button @click="add">{{goods.add}}</button>
-                      </div>
+                          <p>商品单价:{{price}}</p>
+                          <button @click="sub">-</button>
+                          <p>{{count}}件</p>
+                          <button @click="add">+</button>
                   </div>`,
+        props: ['price', 'index'],
         data: function () {
             return {
-                goods_list:arr
+                count: 0
             }
         },
         methods: {
             add: function () {
-                var count = 0;
-                this.goods_list.forEach(function (key) {
-                    count = key.count++;
-                });
-                console.log(count)
-                this.$emit('pass', count)
+                this.count++;
+                this.$emit('pass', this.count, this.index)
             },
             sub: function () {
-                var count = 0;
-                this.goods_list.forEach(function (key) {
-                    if (key.count <= 0) {
-                        key.count = 0;
-                        return;
-                    }
-                    count = key.count--;
-                });
-                this.$emit('pass', count)
+                if (this.count <= 0) {
+                    this.count = 0;
+                    return;
+                }
+                this.count--;
+                this.$emit('pass', this.count, this.index)
             }
         }
     });
@@ -59,29 +53,25 @@
     new Vue({
         el: '#app',
         data: {
-            totalPrice: 0,
-            goods_list: arr
-        },
-        watch: {
-            goods_list:function(newValue,oldValue){
-               console.log(newValue,oldValue);
-            }
+            goods: [
+                {price: 10, count: 0},
+                {price: 20, count: 0},
+                {price: 30, count: 0},
+                {price: 40, count: 0}
+                ]
         },
         computed: {
-            //计算总金额
-            goods_list:function(){
-                var vm=this;
-                //每次进来要重置总金额
-                vm.totalPrice=0;
-                this.goods_list.forEach(function(mess){
-                    vm.totalPrice+=parseInt(mess.price*mess.count);
-                });
-                return this.totalPrice;
+            totalPrice:function () {
+                var total = 0;
+                for (var i = 0; i < this.goods.length; i++) {
+                    total += this.goods[i].count * this.goods[i].price;
+                }
+                return total;
             }
         },
         methods: {
-            total: function (count) {
-                this.totalPrice = count * 100;
+            total: function (count,index) {
+                this.goods[index].count = count;
             }
         }
     })
