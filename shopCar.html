@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>shopCar</title>
+    <link rel="stylesheet" href="css/shopCar.css">
+    <script src="node_modules/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <shopping @pass="total"></shopping>
+    <p>总价:{{totalPrice}}</p>
+</div>
+<script>
+    var arr = [{sub: "-", add: "+", price: 10, count: 0},
+                {sub: "-", add: "+", price: 20, count: 0},
+                {sub: "-", add: "+", price: 30, count: 0},
+                {sub: "-", add: "+", price: 40, count: 0}];
+    Vue.component('Shopping', {
+        template: `<div>
+                      <div v-for="(goods,index) in goods_list">
+                          <p>单价:{{goods.price}}</p>
+                          <button @click="sub">{{goods.sub}}</button>
+                          <p>{{goods.count}}件</p>
+                          <button @click="add">{{goods.add}}</button>
+                      </div>
+                  </div>`,
+        data: function () {
+            return {
+                goods_list:arr
+            }
+        },
+        methods: {
+            add: function () {
+                var count = 0;
+                this.goods_list.forEach(function (key) {
+                    count = key.count++;
+                });
+                console.log(count)
+                this.$emit('pass', count)
+            },
+            sub: function () {
+                var count = 0;
+                this.goods_list.forEach(function (key) {
+                    if (key.count <= 0) {
+                        key.count = 0;
+                        return;
+                    }
+                    count = key.count--;
+                });
+                this.$emit('pass', count)
+            }
+        }
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            totalPrice: 0,
+            goods_list: arr
+        },
+        watch: {
+            goods_list:function(newValue,oldValue){
+               console.log(newValue,oldValue);
+            }
+        },
+        computed: {
+            //计算总金额
+            goods_list:function(){
+                var vm=this;
+                //每次进来要重置总金额
+                vm.totalPrice=0;
+                this.goods_list.forEach(function(mess){
+                    vm.totalPrice+=parseInt(mess.price*mess.count);
+                });
+                return this.totalPrice;
+            }
+        },
+        methods: {
+            total: function (count) {
+                this.totalPrice = count * 100;
+            }
+        }
+    })
+</script>
+</body>
+</html>

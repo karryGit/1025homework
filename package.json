@@ -1,0 +1,23 @@
+{
+  "name": "1025homework",
+  "version": "1.0.0",
+  "description": "Vue实现简易购物车",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karryGit/1025homework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karryGit/1025homework/issues"
+  },
+  "homepage": "https://github.com/karryGit/1025homework#readme",
+  "dependencies": {
+    "vue": "^2.5.2"
+  }
+}
